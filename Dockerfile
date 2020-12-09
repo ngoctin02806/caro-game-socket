@@ -9,8 +9,8 @@ COPY ./package*.json ./
 
 RUN npm install --production
 
-COPY ./src ./
+COPY . .
 
-EXPOSE 8000
+EXPOSE 8001
 
 CMD [ "node", "src/bootstrap.js" ]
