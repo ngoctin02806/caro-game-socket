@@ -8,6 +8,14 @@ const socketConfig = require('./core/socket.core');
 
 const logger = require('./lib/logger');
 
+process.on('uncaughtException', e => {
+  console.log(e);
+});
+
+process.on('unhandledRejection', e => {
+  console.log(e);
+});
+
 const startServer = async () => {
   try {
     await mongoConfig.connect(config.get('MONGO_URL'));

@@ -1,0 +1,18 @@
+version: '3.8'
+services: 
+  socket_service:
+    restart: always
+    container_name: 'caro-game-socket'
+    build:
+      context: '.'
+    image: ngoctin02806/caro-game-socket
+    ports:
+      - "8012:8001"
+    environment: 
+      - MONGO_URL=${MONGO_URL}
+      - PORT=8001
+      - NODE_ENV=development
+networks:
+  default:
+    external:
+      name: my-cicd-network
