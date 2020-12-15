@@ -3,6 +3,12 @@
 > Event is emitted from server
 
 ```javascript
+   - `joined-game-room`: emit event to notify client that user has joined room
+   payload: {
+      user_id: "RBWHl-P7J5tXm9nCPUQrkU-EmwG78pXovt3ue0Nx",
+      username: "User A"
+      avatar: "http://avatar.com"
+   }
    
 ```
 
@@ -16,10 +22,13 @@
 ```
 
 ```javascript
+   - `emit-user-logout`: emit event to update status online of user
+```
+
+```javascript
    - `emit-conversation-single`: emit event to join room
    payload: {
       room_id: "conversation_id",
-      user_id: "Q6VB8LYM-pI33R6vV1j9wThUdJ2YP9qFpaXE6qeR",
       partner_id: "RBWHl-P7J5tXm9nCPUQrkU-EmwG78pXovt3ue0Nx"
    }
 ```
@@ -33,5 +42,13 @@
          content: "Test message",
          type: 'CONVERSATION_SINGLE' | 'CONVERSATION_GROUP' | 'CONVERSATION_GAME'
       }
+   }
+```
+
+```javascript
+   - `emit-conversation-game`: emit event to join room
+   payload: {
+      room_id: "conversation_id",
+      user_id: "RBWHl-P7J5tXm9nCPUQrkU-EmwG78pXovt3ue0Nx"
    }
 ```
