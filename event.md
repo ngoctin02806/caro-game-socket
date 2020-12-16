@@ -46,9 +46,25 @@
 ```
 
 ```javascript
+   - `emit-conversation-game-message`: emit event to broadcast to partners in room
+   payload: {
+      room_id: "conversation_id",
+      message: {
+         sender_id: "RBWHl-P7J5tXm9nCPUQrkU-EmwG78pXovt3ue0Nx",
+         content: "Test message",
+         type: 'CONVERSATION_SINGLE' | 'CONVERSATION_GROUP' | 'CONVERSATION_GAME'
+      }
+   }
+```
+
+```javascript
    - `emit-conversation-game`: emit event to join room
    payload: {
       room_id: "conversation_id",
       user_id: "RBWHl-P7J5tXm9nCPUQrkU-EmwG78pXovt3ue0Nx"
    }
+```
+
+```javascript
+   - `emit-user-logout`: emit event to remove socket in PERSISTENT_SOCKETS
 ```

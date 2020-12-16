@@ -6,6 +6,7 @@ const {
   updateOnlineStatusUser,
   insertNewMessage,
   findUserById,
+  updateOfflineStatusUser,
 } = require('../functions/handleUser');
 
 /**
@@ -143,7 +144,7 @@ const persistentConnection = http =>
         }
       );
 
-      socket.on('disconnect', () => {
+      socket.on('emit-user-logout', async () => {
         console.log(`${socket.id} is disconnected`);
         const index = PERSITENT_SOCKETS.findIndex(item => {
           return item.socket.id === socket.id;
@@ -152,6 +153,21 @@ const persistentConnection = http =>
         console.log(index);
 
         if (index !== -1) {
+          await updateOfflineStatusUser(PERSITENT_SOCKETS[index].user_id);
+          PERSITENT_SOCKETS.splice(index, 1);
+        }
+      });
+
+      socket.on('disconnect', async () => {
+        console.log(`${socket.id} is disconnected`);
+        const index = PERSITENT_SOCKETS.findIndex(item => {
+          return item.socket.id === socket.id;
+        });
+
+        console.log(index);
+
+        if (index !== -1) {
+          await updateOfflineStatusUser(PERSITENT_SOCKETS[index].user_id);
           PERSITENT_SOCKETS.splice(index, 1);
         }
       });

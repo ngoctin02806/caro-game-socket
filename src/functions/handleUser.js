@@ -20,6 +20,22 @@ module.exports.updateOnlineStatusUser = async userId => {
   }
 };
 
+module.exports.updateOfflineStatusUser = async userId => {
+  try {
+    const db = mongoConfig.db();
+    const collection = db.collection(COLLECTION);
+
+    const result = await collection.updateOne(
+      { _id: userId },
+      { $set: { online_state: false } }
+    );
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports.insertNewMessage = async message => {
   try {
     const db = mongoConfig.db();
