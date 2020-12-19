@@ -68,3 +68,10 @@
 ```javascript
    - `emit-user-logout`: emit event to remove socket in PERSISTENT_SOCKETS
 ```
+
+```javascript
+   - `emit-rejoin-room`: emit a array of all conversations to socket server to rejoin room again
+   payload: {
+      conversations: ['conversationId 1', 'conversationId 2']
+   }
+```

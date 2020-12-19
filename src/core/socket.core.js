@@ -9,6 +9,10 @@ const {
   updateOfflineStatusUser,
 } = require('../functions/handleUser');
 
+const {
+  findConversationWithParticipant,
+} = require('../functions/handleConversation');
+
 /**
  * Payload of item of PERSITENT_SOCKETS
  * {
@@ -102,13 +106,16 @@ const persistentConnection = http =>
             created_at: new Date().getTime(),
           });
 
-          console.log(room_id);
+          const conversation = await findConversationWithParticipant(room_id);
 
-          console.log(socket.rooms);
+          console.log(conversation);
+
+          const participants = conversation[0].participants;
 
           socket.to(room_id).emit('conversation-message', {
             room_id,
             sender_id: message.sender_id,
+            partner_id: participants.find(p => p != message.sender_id),
             message,
           });
 
@@ -143,6 +150,24 @@ const persistentConnection = http =>
           });
         }
       );
+
+      // Rejoin room
+      socket.on('emit-rejoin-room', async conversations => {
+        // Get user
+        const socketData = PERSITENT_SOCKETS.find(
+          soc => soc.socket.id === socket.id
+        );
+
+        const user = await findUserById(socketData.user_id);
+
+        conversations.forEach(con => {
+          socket.join(con);
+        });
+
+        socket.emit('joined-room', {
+          ...user,
+        });
+      });
 
       socket.on('emit-user-logout', async () => {
         console.log(`${socket.id} is disconnected`);
