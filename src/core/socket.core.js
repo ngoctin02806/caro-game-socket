@@ -12,6 +12,7 @@ const {
 const {
   findConversationWithParticipant,
 } = require('../functions/handleConversation');
+const { GAME_GUEST, GAME_PLAYER } = require('../constants/game.constant');
 
 /**
  * Payload of item of PERSITENT_SOCKETS
@@ -47,6 +48,54 @@ const persistentConnection = http =>
         });
 
         await updateOnlineStatusUser(msg.user_id);
+      });
+
+      // eslint-disable-next-line camelcase
+      socket.on('emit-start-game', ({ room_id, user_id }) => {
+        socket.to(room_id).emit('start-game', { user_id });
+      });
+
+      // eslint-disable-next-line camelcase
+      socket.on('emit-join-room-game', async ({ room_id, user_id, type }) => {
+        socket.join(room_id);
+
+        const user = await findUserById(user_id);
+
+        if (type === GAME_GUEST) {
+          console.log(type);
+          socket.to(room_id).emit('guest-join-room-game', {
+            user: {
+              // eslint-disable-next-line no-underscore-dangle
+              _id: user._id,
+              username: user.username,
+              avatar: user.avatar,
+            },
+          });
+        } else {
+          socket.to(room_id).emit('player-join-room-game', {
+            // eslint-disable-next-line no-underscore-dangle
+            _id: user._id,
+            username: user.username,
+            avatar: user.avatar,
+            type: GAME_PLAYER,
+            guest_type: type,
+          });
+        }
+      });
+
+      // eslint-disable-next-line camelcase
+      socket.on('emit-leave-room-game', ({ room_id, user_id, type }) => {
+        socket.leave(room_id);
+
+        if (type === GAME_GUEST) {
+          socket.to(room_id).emit('guest-leave-room-game', {
+            user_id,
+          });
+        } else {
+          socket.to(room_id).emit('player-leave-room-game', {
+            user_id,
+          });
+        }
       });
 
       // eslint-disable-next-line
