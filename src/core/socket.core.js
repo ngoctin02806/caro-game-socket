@@ -50,9 +50,23 @@ const persistentConnection = http =>
         await updateOnlineStatusUser(msg.user_id);
       });
 
+      socket.on(
+        'emit-step-game',
+        // eslint-disable-next-line camelcase
+        ({ room_id, next_user_id, step }) => {
+          console.log('next player id', next_user_id);
+
+          socket.to(room_id).emit('step-game', { next_user_id, step });
+
+          io.to(room_id).emit('start-game', { user_id: next_user_id });
+        }
+      );
+
       // eslint-disable-next-line camelcase
-      socket.on('emit-start-game', ({ room_id, user_id }) => {
-        socket.to(room_id).emit('start-game', { user_id });
+      socket.on('emit-start-game', ({ room_id, user_id, game }) => {
+        io.to(room_id).emit('start-game', { user_id });
+
+        socket.to(room_id).emit('start-game-data', { user_id, game });
       });
 
       // eslint-disable-next-line camelcase

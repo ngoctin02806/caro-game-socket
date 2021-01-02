@@ -36,6 +36,14 @@
    }
 ```
 
+```javascript
+   - `step-game`: emit event to notify client that next player will play
+   payload: {
+      next_player_id: 'userId',
+      step: [1, 1]
+   }
+```
+
 > Event is emitted from client
 
 ```javascript
@@ -129,7 +137,7 @@
    - `emit-step-game`: emit event to show all steps that user has move
    payload: {
       room_id: 'roomId', // Room game
-      user_id: 'userId',
+      next_user_id: 'userId',
       step: [1, 1]
    }
 ```
