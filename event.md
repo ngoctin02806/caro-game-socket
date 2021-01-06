@@ -44,6 +44,13 @@
    }
 ```
 
+```javascript
+   - `show-invitation`: emit event to notify to user that has been invited by another
+   payload: {
+      room_id: 'roomId'
+   }
+```
+
 > Event is emitted from client
 
 ```javascript
@@ -139,5 +146,14 @@
       room_id: 'roomId', // Room game
       next_user_id: 'userId',
       step: [1, 1]
+   }
+```
+
+```javascript
+   - `emit-invitation-join-room`: emit event to invite user to join room
+   payload: {
+      room_id: 'roomId',
+      partner_id: 'userId',
+      user_id: 'userId'
    }
 ```

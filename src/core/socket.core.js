@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const socketLib = require('socket.io');
 const config = require('config');
 const generateSafeId = require('generate-safe-id');
@@ -12,6 +13,9 @@ const {
 const {
   findConversationWithParticipant,
 } = require('../functions/handleConversation');
+
+const { findRoomById } = require('../functions/handleRoom');
+
 const { GAME_GUEST, GAME_PLAYER } = require('../constants/game.constant');
 
 /**
@@ -39,6 +43,38 @@ const persistentConnection = http =>
     io.on('connection', socket => {
       console.log(`Socket ${socket.id} is connected`);
 
+      socket.on(
+        'emit-invitation-join-room',
+        // eslint-disable-next-line camelcase
+        async ({ room_type, room_id, partner_id, user_id }) => {
+          const partnerSoc = PERSITENT_SOCKETS.find(
+            // eslint-disable-next-line camelcase
+            soc => soc.user_id === partner_id
+          );
+
+          const user = await findUserById(user_id);
+
+          let room = { room_secret: '' };
+
+          // eslint-disable-next-line camelcase
+          if (room_type === 'PRIVATE') {
+            room = await findRoomById();
+          }
+
+          delete user.password;
+          delete user.is_verified;
+          delete user.verified_code;
+          delete user.has_topup;
+
+          partnerSoc.socket.emit('show-invitation', {
+            room_id,
+            room_type,
+            room_secret: room.room_secret,
+            user,
+          });
+        }
+      );
+
       socket.on('emit-user-login', async msg => {
         console.log(`user-login`, msg);
 
@@ -53,10 +89,12 @@ const persistentConnection = http =>
       socket.on(
         'emit-step-game',
         // eslint-disable-next-line camelcase
-        ({ room_id, next_user_id, step }) => {
+        ({ room_id, next_user_id, step, character }) => {
           console.log('next player id', next_user_id);
 
-          socket.to(room_id).emit('step-game', { next_user_id, step });
+          socket
+            .to(room_id)
+            .emit('step-game', { next_user_id, step, character });
 
           io.to(room_id).emit('start-game', { user_id: next_user_id });
         }
@@ -64,6 +102,9 @@ const persistentConnection = http =>
 
       // eslint-disable-next-line camelcase
       socket.on('emit-start-game', ({ room_id, user_id, game }) => {
+        console.log('emit-start-game-123');
+        console.log(room_id);
+
         io.to(room_id).emit('start-game', { user_id });
 
         socket.to(room_id).emit('start-game-data', { user_id, game });
@@ -83,6 +124,7 @@ const persistentConnection = http =>
               _id: user._id,
               username: user.username,
               avatar: user.avatar,
+              point: user.point,
             },
           });
         } else {
@@ -92,6 +134,7 @@ const persistentConnection = http =>
             username: user.username,
             avatar: user.avatar,
             type: GAME_PLAYER,
+            point: user.point,
             guest_type: type,
           });
         }
