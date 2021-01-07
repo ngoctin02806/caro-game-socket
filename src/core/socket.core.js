@@ -46,32 +46,34 @@ const persistentConnection = http =>
       socket.on(
         'emit-invitation-join-room',
         // eslint-disable-next-line camelcase
-        async ({ room_type, room_id, partner_id, user_id }) => {
+        async (agr1, { room_type, room_id, partner_id, user_id }, callback) => {
+          console.log(room_id);
+
           const partnerSoc = PERSITENT_SOCKETS.find(
             // eslint-disable-next-line camelcase
             soc => soc.user_id === partner_id
           );
 
-          const user = await findUserById(user_id);
+          if (partnerSoc) {
+            const user = await findUserById(user_id);
 
-          let room = { room_secret: '' };
+            const room = await findRoomById(room_id);
 
-          // eslint-disable-next-line camelcase
-          if (room_type === 'PRIVATE') {
-            room = await findRoomById();
+            delete user.password;
+            delete user.is_verified;
+            delete user.verified_code;
+            delete user.has_topup;
+
+            partnerSoc.socket.emit('show-invitation', {
+              room_id,
+              room_type,
+              room_secret: room.room_secret,
+              bet_level: room.bet_level,
+              user,
+            });
           }
 
-          delete user.password;
-          delete user.is_verified;
-          delete user.verified_code;
-          delete user.has_topup;
-
-          partnerSoc.socket.emit('show-invitation', {
-            room_id,
-            room_type,
-            room_secret: room.room_secret,
-            user,
-          });
+          callback({ status: 'ok' });
         }
       );
 

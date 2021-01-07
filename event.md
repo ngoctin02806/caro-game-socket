@@ -154,6 +154,7 @@
    payload: {
       room_id: 'roomId',
       partner_id: 'userId',
-      user_id: 'userId'
+      user_id: 'userId',
+      room_type: 'PUBLIC' | 'PRIVATE'
    }
 ```
