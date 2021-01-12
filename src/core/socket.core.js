@@ -14,7 +14,10 @@ const {
   findConversationWithParticipant,
 } = require('../functions/handleConversation');
 
-const { findRoomById } = require('../functions/handleRoom');
+const {
+  findRoomById,
+  checkUserHasJoinRoom,
+} = require('../functions/handleRoom');
 
 const { GAME_GUEST, GAME_PLAYER } = require('../constants/game.constant');
 
@@ -59,6 +62,8 @@ const persistentConnection = http =>
 
             const room = await findRoomById(room_id);
 
+            const partnerIsInOtherRoom = await checkUserHasJoinRoom(partner_id);
+
             delete user.password;
             delete user.is_verified;
             delete user.verified_code;
@@ -71,9 +76,15 @@ const persistentConnection = http =>
               bet_level: room.bet_level,
               user,
             });
-          }
 
-          callback({ status: 'ok' });
+            if (partnerIsInOtherRoom) {
+              callback({ status: 'fail' });
+            } else {
+              callback({ status: 'ok' });
+            }
+          } else {
+            callback({ status: 'offline' });
+          }
         }
       );
 

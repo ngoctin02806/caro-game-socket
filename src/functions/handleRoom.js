@@ -16,6 +16,24 @@ const findRoomById = async roomId => {
   }
 };
 
+const checkUserHasJoinRoom = async userId => {
+  try {
+    const db = mongo.db();
+    const collection = db.collection(COLLECTION);
+
+    const room = await collection.findOne({
+      players: { $elemMatch: { $eq: userId } },
+    });
+
+    if (room) return true;
+
+    return false;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   findRoomById,
+  checkUserHasJoinRoom,
 };
