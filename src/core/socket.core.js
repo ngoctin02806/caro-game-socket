@@ -216,8 +216,6 @@ const persistentConnection = http =>
 
           const conversation = await findConversationWithParticipant(room_id);
 
-          console.log(conversation);
-
           const participants = conversation[0].participants;
 
           socket.to(room_id).emit('conversation-message', {
@@ -238,11 +236,12 @@ const persistentConnection = http =>
 
       socket.on(
         'emit-conversation-game-message',
-        async ({ room_id, message }) => {
+        async ({ room_id, message, game_id }) => {
           await insertNewMessage({
             _id: generateSafeId(),
             content: message.content,
             conversation_id: room_id,
+            game_id,
             created_by: message.sender_id,
             created_at: new Date().getTime(),
           });
