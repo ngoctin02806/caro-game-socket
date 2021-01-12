@@ -12,6 +12,8 @@ services:
       - MONGO_URL=${MONGO_URL}
       - PORT=8001
       - NODE_ENV=development
+      - VIRTUAL_PROTO=https
+      - VIRTUAL_PORT=443
 networks:
   default:
     external:
