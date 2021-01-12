@@ -12,8 +12,8 @@ services:
       - MONGO_URL=${MONGO_URL}
       - PORT=8001
       - NODE_ENV=development
-      - VIRTUAL_PROTO=https
-      - VIRTUAL_PORT=443
+      - VIRTUAL_HOST=socket.hcmusedu.info
+      - VIRTUAL_PORT=8001
 networks:
   default:
     external:
