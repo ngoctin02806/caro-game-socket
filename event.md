@@ -158,3 +158,11 @@
       room_type: 'PUBLIC' | 'PRIVATE'
    }
 ```
+
+```javascript
+   - `emit-run-off-time`: emit event to notify that you loser
+   payload: {
+      room_id: 'roomId',
+      user_id: 'userId'
+   }
+```

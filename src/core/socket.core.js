@@ -46,6 +46,11 @@ const persistentConnection = http =>
     io.on('connection', socket => {
       console.log(`Socket ${socket.id} is connected`);
 
+      // eslint-disable-next-line camelcase
+      socket.on('emit-run-off-time', ({ room_id, user_id }) => {
+        socket.to(room_id).emit('run-off-time', { user_id });
+      });
+
       socket.on(
         'emit-invitation-join-room',
         // eslint-disable-next-line camelcase
